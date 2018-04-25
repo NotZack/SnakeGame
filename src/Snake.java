@@ -11,7 +11,7 @@ class Snake {
     
     static ArrayList<Rectangle> combinedSnake = new ArrayList<Rectangle>(); 
     
-    public static void setSnake(Rectangle snake, int foodEaten) {
+    public static void snakeInit(Rectangle snake) {
         snake.setX(STARTINGX); 
         snake.setY(STARTINGY); 
         snake.setLayoutX(STARTINGX);
@@ -19,13 +19,38 @@ class Snake {
         snake.setWidth(SNAKECHUNK); 
         snake.setHeight(SNAKECHUNK); 
         snake.setFill(Color.GREEN);
+        combinedSnake = new ArrayList<Rectangle>();
+        combinedSnake.add(snake);
+    }
+    
+    public static void setNewSnakeChunk(Rectangle chunk, String direction) {
+        int directionYmod = 0;
+        int directionXmod = 0;
+        System.out.println(direction);
         
-        if(combinedSnake.contains(snake)) {
-        	return;
+        switch(direction) {
+            case "Up": directionYmod = 25; directionXmod = 0; break;   
+            case "Down": directionYmod = -25; directionXmod = 0; break;
+            case "Left": directionXmod = 25; directionYmod = 0; break;
+            case "Right": directionXmod = -25; directionYmod = 0; break;
         }
-        else {
-        	combinedSnake.add(snake);
-        	System.out.println(combinedSnake);
-        }
+        
+        System.out.println(combinedSnake.get(combinedSnake.size()-1).getX());
+        chunk.setTranslateX(0);
+        chunk.setTranslateY(0);
+        chunk.setX(combinedSnake.get(combinedSnake.size()-1).getX() + directionXmod); 
+        chunk.setY(combinedSnake.get(combinedSnake.size()-1).getY() + directionYmod); 
+        chunk.setWidth(SNAKECHUNK); 
+        chunk.setHeight(SNAKECHUNK); 
+        chunk.setFill(Color.BLUE);
+    	    combinedSnake.add(chunk);
+    	    
+    	    Main.root.getChildren().add(chunk);
+       
+    }
+
+    public static void increaseLength() {
+        
+        
     }
 }

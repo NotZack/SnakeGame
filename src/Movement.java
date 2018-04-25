@@ -22,10 +22,10 @@ public class Movement {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             if(!dead) {
                 switch (key.getCode()) {
-                    case UP: up = true; down = false; left = false; right = false; break;
-                    case DOWN: down = true; up = false; left = false; right = false; break;
-                    case LEFT: left = true; up = false; down = false; right = false; break;
-                    case RIGHT: right = true; up = false; down = false; left = false; break;
+                    case UP: if(!down) {up = true; down = false;}left = false; right = false; break;
+                    case DOWN: if(!up) {down = true; up = false;} left = false; right = false; break;
+                    case LEFT: if(!right) {left = true; right = false;} up = false; down = false; break;
+                    case RIGHT: if(!left) {right = true; left = false;} up = false; down = false;  break;
                     case ENTER: enter = true; break;
                     default: break;
                 }
@@ -37,43 +37,35 @@ public class Movement {
                 }
             }
         });
-        
-        /*scene.addEventHandler(KeyEvent.KEY_RELEASED, (key) -> {
-            if(!dead) {
-                switch (key.getCode()) {
-                    case UP: up = false; break;
-                    case DOWN: down = false; break;
-                    case LEFT: left = false; break;
-                    case RIGHT:right = false; break;
-                    default: break;
-                }
-            }
-        });*/
     }
     
     public static void drawMovement(Scene scene) {
+        int oldXOffset = xOffset;
+        int oldYOffset = yOffset;
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
                 if(!dead) {
-                    if (up) yOffset -= 25f;
-                    if (down) yOffset += 25f;
-                    if (right) xOffset += 25f;
-                    if (left)  xOffset -= 25f;
+                    if (up) yOffset -= 25;
+                    if (down) yOffset += 25;
+                    if (right) xOffset += 25;
+                    if (left)  xOffset -= 25;
                     if (enter) {
                         Main.restart();
                         xOffset = 0;
                         yOffset = 0;
                     }
                     
+                    //Movement speed
                     try {
 						Thread.sleep(100 - snakeSpeed);
-					} catch (InterruptedException e) {
+					} 
+                    catch (InterruptedException e) {
 						e.printStackTrace();
 					}
                     
                     checkCollision(scene);
-                    moveSnake(xOffset, yOffset);
+                    moveSnake(xOffset, yOffset, oldXOffset, oldYOffset);
                 }
                 else {
                     if (enter) {
@@ -87,20 +79,36 @@ public class Movement {
         timer.start();
     }
     
-    private static void moveSnake(float xOffset, float yOffset) {
-        if (!dead)
-            Main.snake.relocate(STARTINGX + xOffset, STARTINGY + yOffset);
+    private static void moveSnake(int xOffset, int yOffset, int oldXOffset, int oldYOffset) {
+        double oldX = 0; double oldY = 0;
+        if (!dead) {
+            for(int i = Snake.combinedSnake.size() - 1; i > -1; i--) {
+                if(i == 0) {
+                    oldX = Snake.combinedSnake.get(i).getX() + oldXOffset;
+                    oldY = Snake.combinedSnake.get(i).getY() + oldYOffset;
+                    Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i).getX() + xOffset, Snake.combinedSnake.get(i).getY() + yOffset);
+                }
+                //Snake.combinedSnake.get(i).getX() + xOffset
+                else {
+                    //Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i + 1).getX() + xOffset, Snake.combinedSnake.get(i).getY() + yOffset);
+                }
+                //oldX = oldX + oldXOffset;
+                //oldY = oldY + oldYOffset;
+                
+            }
+        }
+            
     }
     
     private static void checkCollision(Scene scene) {
-    	double currentX = Main.snake.getX() + Main.snake.getLayoutX();
-    	double currentY = Main.snake.getY() + Main.snake.getLayoutY();
+    	    double currentX = Main.snake.getX() + Main.snake.getLayoutX();
+    	    double currentY = Main.snake.getY() + Main.snake.getLayoutY();
     	
-    	//Wall collision
+    	    //Wall collision
         if( (currentX <= Board.getXleftBoundary(scene)) ||
-        	(currentX >= Board.getXrightBoundary(scene) - 50) ||  
-        	(currentY <= Board.getYtopBoundary(scene)) ||
-        	(currentY >= Board.getYbottomBoundary(scene) - 50 ) ) 
+            (currentX >= Board.getXrightBoundary(scene) - 50) ||  
+            (currentY <= Board.getYtopBoundary(scene)) ||
+            (currentY >= Board.getYbottomBoundary(scene) - 50 ) ) 
         {
             up = false; down = false; left = false; right = false;
             dead = true;
@@ -110,14 +118,21 @@ public class Movement {
             dead = false;
         
         //Food collision
-        if( currentX == Main.food.getX() && currentY == Main.food.getY()) {
-        	Food.increaseFoodEaten();
+        if (currentX == Main.food.getX() && currentY == Main.food.getY()) {
+        	    Rectangle snakeChunk = new Rectangle();
+        	    Snake.setNewSnakeChunk(snakeChunk, getDirection());
         	
-        	Rectangle snakeChunk = new Rectangle();
-        	Snake.setSnake(snakeChunk, Food.foodEaten);
-        	
-        	Food.setFood(Main.food);
-        	System.out.println("EATEN");
+        	    Food.increaseFoodEaten();
+        	    Food.setFood(Main.food);
+        	    System.out.println("EATEN");
         }
+    }
+    
+    public static String getDirection() {
+        if(up) return "Up";
+        else if(down) return "Down";
+        else if(left) return "Left";
+        else if(right) return "Right";
+        else return "N/A";
     }
 }
