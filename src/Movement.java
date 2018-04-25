@@ -1,6 +1,7 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.shape.Rectangle;
 
 public class Movement {
     
@@ -9,7 +10,8 @@ public class Movement {
     static int xOffset = 0;
     static int yOffset = 0;
     
-    static final int snakeSpeed = 5;
+    //snakeSpeed is the 'percent' of the max snake speed
+    static final int snakeSpeed = 25;
     
     static final int STARTINGX = 150;
     static final int STARTINGY = 75;
@@ -20,10 +22,10 @@ public class Movement {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             if(!dead) {
                 switch (key.getCode()) {
-                    case UP: up = true; break;
-                    case DOWN: down = true; break;
-                    case LEFT: left = true; break;
-                    case RIGHT: right = true; break;
+                    case UP: up = true; down = false; left = false; right = false; break;
+                    case DOWN: down = true; up = false; left = false; right = false; break;
+                    case LEFT: left = true; up = false; down = false; right = false; break;
+                    case RIGHT: right = true; up = false; down = false; left = false; break;
                     case ENTER: enter = true; break;
                     default: break;
                 }
@@ -36,17 +38,17 @@ public class Movement {
             }
         });
         
-        scene.addEventHandler(KeyEvent.KEY_RELEASED, (key) -> {
+        /*scene.addEventHandler(KeyEvent.KEY_RELEASED, (key) -> {
             if(!dead) {
                 switch (key.getCode()) {
-                    case UP:    up = false; break;
-                    case DOWN:  down = false; break;
-                    case LEFT:  left = false; break;
-                    case RIGHT: right = false; break;
+                    case UP: up = false; break;
+                    case DOWN: down = false; break;
+                    case LEFT: left = false; break;
+                    case RIGHT:right = false; break;
                     default: break;
                 }
             }
-        });
+        });*/
     }
     
     public static void drawMovement(Scene scene) {
@@ -63,7 +65,13 @@ public class Movement {
                         xOffset = 0;
                         yOffset = 0;
                     }
-
+                    
+                    try {
+						Thread.sleep(100 - snakeSpeed);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+                    
                     checkCollision(scene);
                     moveSnake(xOffset, yOffset);
                 }
@@ -85,18 +93,31 @@ public class Movement {
     }
     
     private static void checkCollision(Scene scene) {
-        if( (Main.snake.getX() + Main.snake.getLayoutX()) <= Board.getXleftBoundary(scene) ||
-            (Main.snake.getX() + Main.snake.getLayoutX()) >= Board.getXrightBoundary(scene) ||  
-            (Main.snake.getY() + Main.snake.getLayoutY()) <= Board.getYtopBoundary(scene) ||
-            ((Main.snake.getY() + Main.snake.getLayoutY()) - 25) >= Board.getYbottomBoundary(scene) ) 
+    	double currentX = Main.snake.getX() + Main.snake.getLayoutX();
+    	double currentY = Main.snake.getY() + Main.snake.getLayoutY();
+    	
+    	//Wall collision
+        if( (currentX <= Board.getXleftBoundary(scene)) ||
+        	(currentX >= Board.getXrightBoundary(scene) - 50) ||  
+        	(currentY <= Board.getYtopBoundary(scene)) ||
+        	(currentY >= Board.getYbottomBoundary(scene) - 50 ) ) 
         {
-            
             up = false; down = false; left = false; right = false;
             dead = true;
             System.out.println("DEAD");
         }
-        else {
+        else 
             dead = false;
+        
+        //Food collision
+        if( currentX == Main.food.getX() && currentY == Main.food.getY()) {
+        	Food.increaseFoodEaten();
+        	
+        	Rectangle snakeChunk = new Rectangle();
+        	Snake.setSnake(snakeChunk, Food.foodEaten);
+        	
+        	Food.setFood(Main.food);
+        	System.out.println("EATEN");
         }
     }
 }

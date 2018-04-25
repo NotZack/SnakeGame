@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 import javafx.scene.Scene;
 
 class Board {

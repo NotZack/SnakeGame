@@ -17,6 +17,9 @@ public class Main extends Application {
     static Rectangle food;
     Group root; 
     
+    static int screenWidth = 800;
+    static int screenHeight = 225;
+    
     @Override
     public void start(Stage primaryStage) {
         
@@ -24,16 +27,20 @@ public class Main extends Application {
         food = new Rectangle();
         root = new Group(); 
 
-        Snake.setSnake(snake);
-        Food.setFood(food);
+        Snake.setSnake(snake, Food.foodEaten);
+        Food.initFood(food);
         
         root.getChildren().add(snake);
         root.getChildren().add(food);
         
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
         
+        primaryStage.setFullScreen(true);
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        screenHeight = (int) scene.getHeight();
+        screenWidth = (int) scene.getWidth();
         
         //KeyListeners
         Movement.moveDirection(scene);
@@ -41,7 +48,8 @@ public class Main extends Application {
     }
     
     public static void restart() {
-        Snake.setSnake(snake);
+    	Food.foodEaten = 0;
+        Snake.setSnake(snake, Food.foodEaten);
         Movement.dead = false;
         Movement.enter = false; 
         snake.setTranslateX(0);
