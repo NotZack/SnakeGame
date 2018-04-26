@@ -49,8 +49,7 @@ class Snake {
        
     }
 
-    public static void increaseLength() {
-        
-        
+    public static int getLength() {
+    	return combinedSnake.size();
     }
 }

@@ -1,6 +1,7 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Movement {
@@ -40,8 +41,7 @@ public class Movement {
     }
     
     public static void drawMovement(Scene scene) {
-        int oldXOffset = xOffset;
-        int oldYOffset = yOffset;
+        
         AnimationTimer timer = new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -65,7 +65,7 @@ public class Movement {
 					}
                     
                     checkCollision(scene);
-                    moveSnake(xOffset, yOffset, oldXOffset, oldYOffset);
+                    moveSnake(xOffset, yOffset);
                 }
                 else {
                     if (enter) {
@@ -79,21 +79,16 @@ public class Movement {
         timer.start();
     }
     
-    private static void moveSnake(int xOffset, int yOffset, int oldXOffset, int oldYOffset) {
-        double oldX = 0; double oldY = 0;
+    private static void moveSnake(int xOffset, int yOffset) {
         if (!dead) {
             for(int i = Snake.combinedSnake.size() - 1; i > -1; i--) {
                 if(i == 0) {
-                    oldX = Snake.combinedSnake.get(i).getX() + oldXOffset;
-                    oldY = Snake.combinedSnake.get(i).getY() + oldYOffset;
                     Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i).getX() + xOffset, Snake.combinedSnake.get(i).getY() + yOffset);
                 }
-                //Snake.combinedSnake.get(i).getX() + xOffset
                 else {
-                    //Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i + 1).getX() + xOffset, Snake.combinedSnake.get(i).getY() + yOffset);
+                    Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i - 1).getX() + Snake.combinedSnake.get(i - 1).getLayoutX(), Snake.combinedSnake.get(i - 1).getY() + Snake.combinedSnake.get(i - 1).getLayoutY());
                 }
-                //oldX = oldX + oldXOffset;
-                //oldY = oldY + oldYOffset;
+                
                 
             }
         }
@@ -101,10 +96,10 @@ public class Movement {
     }
     
     private static void checkCollision(Scene scene) {
-    	    double currentX = Main.snake.getX() + Main.snake.getLayoutX();
-    	    double currentY = Main.snake.getY() + Main.snake.getLayoutY();
+    	double currentX = Main.snake.getX() + Main.snake.getLayoutX();
+    	double currentY = Main.snake.getY() + Main.snake.getLayoutY();
     	
-    	    //Wall collision
+    	//Wall collision
         if( (currentX <= Board.getXleftBoundary(scene)) ||
             (currentX >= Board.getXrightBoundary(scene) - 50) ||  
             (currentY <= Board.getYtopBoundary(scene)) ||
@@ -112,6 +107,7 @@ public class Movement {
         {
             up = false; down = false; left = false; right = false;
             dead = true;
+            Scoreboard.setSnakeLengthText();
             System.out.println("DEAD");
         }
         else 
@@ -119,12 +115,23 @@ public class Movement {
         
         //Food collision
         if (currentX == Main.food.getX() && currentY == Main.food.getY()) {
-        	    Rectangle snakeChunk = new Rectangle();
-        	    Snake.setNewSnakeChunk(snakeChunk, getDirection());
-        	
-        	    Food.increaseFoodEaten();
-        	    Food.setFood(Main.food);
-        	    System.out.println("EATEN");
+    	    Rectangle snakeChunk = new Rectangle();
+    	    Snake.setNewSnakeChunk(snakeChunk, getDirection());
+    	
+    	    Food.increaseFoodEaten();
+    	    Food.setFood(Main.food);
+    	    Scoreboard.setSnakeLengthText();
+    	    System.out.println("EATEN");
+        }
+        
+        //Self collision
+        for(int i = 1; i < Snake.combinedSnake.size(); i++) {
+        	if( (currentX == (Snake.combinedSnake.get(i).getX() + Snake.combinedSnake.get(i).getLayoutX())) && ( currentY == (Snake.combinedSnake.get(i).getY() + Snake.combinedSnake.get(i).getLayoutY()) ) ) {
+        		up = false; down = false; left = false; right = false;
+                dead = true;
+                Scoreboard.setSnakeLengthText();
+                System.out.println("DEAD");
+        	}
         }
     }
     
