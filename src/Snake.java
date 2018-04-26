@@ -7,10 +7,16 @@ class Snake {
     static final int SNAKECHUNK = 25;
     static final int STARTINGX = 150;
     static final int STARTINGY = 75;
-    static int chunkAmount = 1;
+
+    static Rectangle snakeHead = new Rectangle();
     
+    //A list containing every chunk of the snake including the head
     static ArrayList<Rectangle> combinedSnake = new ArrayList<Rectangle>(); 
     
+    /**
+     * Initializes the snake variables. Resets combinedSnake because this method is only called when starting or restarting.
+     * @param the head of the snake that will always be the first index of combinedSnake.
+     */
     public static void snakeInit(Rectangle snake) {
         snake.setX(STARTINGX); 
         snake.setY(STARTINGY); 
@@ -23,10 +29,15 @@ class Snake {
         combinedSnake.add(snake);
     }
     
+    /**
+     * Creates a new snake chunk from a rectangle in the correct direction from the last index of the combinedSnake list. 
+     * It then sets the chunk's variables and adds it to the root node.
+     * @param chunk, the rectangle that is added to the snake as a chunk
+     * @param direction, the direction that the chunk is added on to
+     */
     public static void setNewSnakeChunk(Rectangle chunk, String direction) {
         int directionYmod = 0;
         int directionXmod = 0;
-        System.out.println(direction);
         
         switch(direction) {
             case "Up": directionYmod = 25; directionXmod = 0; break;   
@@ -35,25 +46,32 @@ class Snake {
             case "Right": directionXmod = -25; directionYmod = 0; break;
         }
         
-        System.out.println(combinedSnake.get(combinedSnake.size()-1).getX());
         chunk.setTranslateX(0);
         chunk.setTranslateY(0);
         chunk.setX(combinedSnake.get(combinedSnake.size()-1).getX() + directionXmod); 
         chunk.setY(combinedSnake.get(combinedSnake.size()-1).getY() + directionYmod); 
         chunk.setWidth(SNAKECHUNK); 
         chunk.setHeight(SNAKECHUNK); 
-        chunk.setFill(Color.BLUE);
+        chunk.setFill(Color.GREEN);
 	    combinedSnake.add(chunk);
 	    
 	    Main.root.getChildren().add(chunk);
        
     }
 
+    /**
+     * @returns the length of the snake from the combinedSnake list
+     */
     public static int getLength() {
-    	return combinedSnake.size();
+    	    return combinedSnake.size();
     }
-    
+
+    /**
+     * @returns if not set, the first index of combinedSnake is set to snake head, and then returns the first index.
+     */
     public static Rectangle getSnakeHead() {
-    	return combinedSnake.get(0);
+        if (combinedSnake.isEmpty()) 
+            combinedSnake.add(snakeHead);
+    	    return combinedSnake.get(0);
     }
 }
