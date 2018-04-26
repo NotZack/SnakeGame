@@ -9,10 +9,9 @@ import javafx.stage.Stage;
  
 public class Main extends Application {
     
-    static Rectangle snake;
     static Rectangle food;
-    static Group root; 
     static Text snakeLengthText;
+    static Group root;
     
     static int screenWidth = 800;
     static int screenHeight = 225;
@@ -20,9 +19,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         
-        snake = new Rectangle();
-        food = new Rectangle();
-        root = new Group(); 
+    	Board board = new Board();
+    	Rectangle snake = new Rectangle();
+    	food = new Rectangle();
+         root = new Group(); 
         snakeLengthText = new Text();
 
         Snake.snakeInit(snake);
@@ -39,23 +39,29 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         
-        screenHeight = (int) scene.getHeight();
-        screenWidth = (int) scene.getWidth();
+        board.setScene(scene);
         
         //KeyListeners
         Movement.moveDirection(scene);
-        Movement.drawMovement(scene);
+        Movement.gameLoop(scene);
+    }
+    
+    private static void cleanup() {
+    	Movement.xOffset = 0;
+        Movement.yOffset = 0;
+        Movement.dead = false;
+        Movement.enter = false;
+        
+        Snake.getSnakeHead().setTranslateX(0);
+        Snake.getSnakeHead().setTranslateY(0);
+        
+        root.getChildren().remove(3, root.getChildren().size());
     }
     
     public static void restart() {
-    	Food.foodEaten = 0;
-        Snake.snakeInit(snake);
-        Movement.dead = false;
-        Movement.enter = false; 
-        root.getChildren().remove(3, root.getChildren().size());
-        Scoreboard.setSnakeLengthText();
-        snake.setTranslateX(0);
-        snake.setTranslateY(0);
+        cleanup();
+    	Snake.snakeInit(Snake.getSnakeHead());
+    	Scoreboard.setSnakeLengthText();
         System.out.println("ALIVE");
     }
  

@@ -43,13 +43,17 @@ class Snake {
         chunk.setWidth(SNAKECHUNK); 
         chunk.setHeight(SNAKECHUNK); 
         chunk.setFill(Color.BLUE);
-    	    combinedSnake.add(chunk);
-    	    
-    	    Main.root.getChildren().add(chunk);
+	    combinedSnake.add(chunk);
+	    
+	    Main.root.getChildren().add(chunk);
        
     }
 
     public static int getLength() {
     	return combinedSnake.size();
+    }
+    
+    public static Rectangle getSnakeHead() {
+    	return combinedSnake.get(0);
     }
 }
