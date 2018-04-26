@@ -56,6 +56,8 @@ class Snake {
 	    combinedSnake.add(chunk);
 	    
 	    Main.root.getChildren().add(chunk);
+	    
+	    Movement.snakeSpeed += 5_000_000;
        
     }
 

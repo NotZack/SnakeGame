@@ -47,6 +47,7 @@ public class Main extends Application {
         Movement.yOffset = 0;
         Movement.dead = false;
         Movement.enter = false;
+        Movement.snakeSpeed = 25_000_000;
         
         Snake.getSnakeHead().setTranslateX(0);
         Snake.getSnakeHead().setTranslateY(0);

@@ -13,7 +13,7 @@ public class Movement {
     static int yOffset = 0;
     
     //snakeSpeed is the 'percent' of the max snake speed
-    static final int snakeSpeed = 25;
+    static long snakeSpeed = 25_000_000;
 
     //If the snake had died
     public static boolean dead = false;
@@ -47,32 +47,35 @@ public class Movement {
     }
     
     /**
-     * Declares an animation timer that runs for every instant while the game is running. Checks if direction key and enter key
+     * Declares an animation timer that runs for every 100_000_000 - snakeSpeed milliseconds. Checks if direction key and enter key
      * values are true, then increases the corresponding xOffset/yOffset or, if enter is true, reInits. Then calls the update methods
-     * tick, checkCollision, and moveSnake.
+     * checkCollision, and moveSnake.
      *@param frameTime, the timestamp of the current frame
      */
     public static void gameLoop() {
         
         AnimationTimer timer = new AnimationTimer() {
+            private long lastUpdate = 0 ;
+            
             @Override
             public void handle(long frameTime) {
-                if(!dead) {
-                    if (up) yOffset -= 25;
-                    if (down) yOffset += 25;
-                    if (right) xOffset += 25;
-                    if (left) xOffset -= 25;
-                    if (enter) Main.reInit();
+                if (frameTime - lastUpdate >= (100_000_000 - snakeSpeed)) {
+                    if(!dead) {
+                        if (up) yOffset -= 25;
+                        if (down) yOffset += 25;
+                        if (right) xOffset += 25;
+                        if (left) xOffset -= 25;
+                        if (enter) Main.reInit();
+                        
+                        checkCollision();
+                        moveSnake(xOffset, yOffset);
+                    }
+                    else if (enter) 
+                        Main.reInit();
                     
-                    //Movement speed
-                    try { Thread.sleep(100 - snakeSpeed); }
-                    catch (InterruptedException e) { e.printStackTrace(); }
-                    
-                    checkCollision();
-                    moveSnake(xOffset, yOffset);
+                    lastUpdate = frameTime;
                 }
-                else if (enter) 
-                    Main.reInit();
+                
             }
         };
         timer.start();
