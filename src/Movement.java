@@ -8,14 +8,23 @@ public class Movement {
     
     public static boolean up, down, left, right, enter;
     
+    //The x and y offset of the snake from the initial x and y coordinates
     static int xOffset = 0;
     static int yOffset = 0;
     
     //snakeSpeed is the 'percent' of the max snake speed
     static final int snakeSpeed = 25;
 
+    //If the snake had died
     public static boolean dead = false;
     
+    /**
+     * Sets an event listener that detects if a key is pressed. If an arrow key is pressed than the corresponding 
+     * direction variable is set to true and the others set to false. The key pressed is not set to true if the 
+     * opposite direction to that key is set to true (no backwards). If enter is pressed the game resets.
+     * 
+     * @param scene, to set the event handler to
+     */
     public static void moveDirection(Scene scene) {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             if(!dead) {
@@ -37,7 +46,13 @@ public class Movement {
         });
     }
     
-    public static void gameLoop(Scene scene) {
+    /**
+     * Declares an animation timer that runs for every instant while the game is running. Checks if direction key and enter key
+     * values are true, then increases the corresponding xOffset/yOffset or, if enter is true, reInits. Then calls the update methods
+     * tick, checkCollision, and moveSnake.
+     *@param frameTime, the timestamp of the current frame
+     */
+    public static void gameLoop() {
         
         AnimationTimer timer = new AnimationTimer() {
             @Override
@@ -47,7 +62,7 @@ public class Movement {
                     if (down) yOffset += 25;
                     if (right) xOffset += 25;
                     if (left) xOffset -= 25;
-                    if (enter) Main.restart();
+                    if (enter) Main.reInit();
                     
                     //Movement speed
                     try { Thread.sleep(100 - snakeSpeed); }
@@ -57,33 +72,38 @@ public class Movement {
                     moveSnake(xOffset, yOffset);
                 }
                 else if (enter) 
-                    Main.restart();
+                    Main.reInit();
             }
         };
         timer.start();
     }
-    
+    /**
+     * Defines a for loop that starts from the last index (last chunk) of the snake, relocating it to the previous chunk of the snake
+     * by adding the previous chunk's x/y and layoutX/layoutY.
+     * @param xOffset, the x offset from initial x coordinate
+     * @param yOffset, the y offset from initial y coordinate
+     */
     private static void moveSnake(int xOffset, int yOffset) {
         if (!dead) {
             for(int i = Snake.combinedSnake.size() - 1; i > -1; i--) {
-                if(i == 0) {
-                	Snake.getSnakeHead().relocate(Snake.getSnakeHead().getX() + xOffset, Snake.getSnakeHead().getY() + yOffset);
-                }
-                else {
+                if(i == 0) 
+                	    Snake.getSnakeHead().relocate(Snake.getSnakeHead().getX() + xOffset, Snake.getSnakeHead().getY() + yOffset);
+                else 
                     Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i - 1).getX() + Snake.combinedSnake.get(i - 1).getLayoutX(), Snake.combinedSnake.get(i - 1).getY() + Snake.combinedSnake.get(i - 1).getLayoutY());
-                }
-                
-                
             }
         }
             
     }
     
+    /**
+     * Gets the head of the snake's x and y coordinates and checks against the collision objects: the wall, the food, and the snake
+     * itself.
+     */
     private static void checkCollision() {
-    	double currentX = Snake.getSnakeHead().getX() + Snake.getSnakeHead().getLayoutX();
-    	double currentY = Snake.getSnakeHead().getY() + Snake.getSnakeHead().getLayoutY();
-    	
-    	//Wall collision
+        	double currentX = Snake.getSnakeHead().getX() + Snake.getSnakeHead().getLayoutX();
+        	double currentY = Snake.getSnakeHead().getY() + Snake.getSnakeHead().getLayoutY();
+        	
+        	//Wall collision
         if( (currentX <= Board.getXleftBoundary()) ||
             (currentX >= Board.getXrightBoundary() - 50) ||  
             (currentY <= Board.getYtopBoundary()) ||
@@ -91,33 +111,32 @@ public class Movement {
         {
             up = false; down = false; left = false; right = false;
             dead = true;
-            Scoreboard.setSnakeLengthText();
-            System.out.println("DEAD");
+            //Scoreboard.setSnakeLengthText();
         }
         else 
             dead = false;
         
         //Food collision
-        if (currentX == Main.food.getX() && currentY == Main.food.getY()) {
-    	    Rectangle snakeChunk = new Rectangle();
-    	    Snake.setNewSnakeChunk(snakeChunk, getDirection());
-
-    	    Food.setFood(Main.food);
-    	    Scoreboard.setSnakeLengthText();
-    	    System.out.println("EATEN");
+        if (currentX == Food.food.getX() && currentY == Food.food.getY()) {
+        	    Rectangle snakeChunk = new Rectangle();
+        	    Snake.setNewSnakeChunk(snakeChunk, getDirection());
+    
+        	    Food.initFood();
+        	    //Scoreboard.setSnakeLengthText();
         }
         
-        //Self collision
+        //Self collision iterates through every chunk of the snake and checks if it intersecting with the head
         for(int i = 1; i < Snake.combinedSnake.size(); i++) {
-        	if( (currentX == (Snake.combinedSnake.get(i).getX() + Snake.combinedSnake.get(i).getLayoutX())) && ( currentY == (Snake.combinedSnake.get(i).getY() + Snake.combinedSnake.get(i).getLayoutY()) ) ) {
-        		up = false; down = false; left = false; right = false;
+            	if( (currentX == (Snake.combinedSnake.get(i).getX() + Snake.combinedSnake.get(i).getLayoutX())) && ( currentY == (Snake.combinedSnake.get(i).getY() + Snake.combinedSnake.get(i).getLayoutY()) ) ) {
+            		up = false; down = false; left = false; right = false;
                 dead = true;
-                Scoreboard.setSnakeLengthText();
-                System.out.println("DEAD");
-        	}
+                //Scoreboard.setSnakeLengthText();
+            	}
         }
     }
-    
+    /**
+     * @returns a string representation of the direction that the head is going in.
+     */
     public static String getDirection() {
         if(up) return "Up";
         else if(down) return "Down";

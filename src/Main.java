@@ -9,29 +9,21 @@ import javafx.stage.Stage;
  
 public class Main extends Application {
     
-    static Rectangle food;
-    static Text snakeLengthText;
+    //Fields because food, root, and snakeLengthText need to be updated from other classes
+    //static Rectangle food;
     static Group root;
     
-    static int screenWidth = 800;
-    static int screenHeight = 225;
-    
+    /**
+     * The first thing that is ran during the application startup. Sets the first objects for their corresponding classes and adds them
+     * to the root node. Sets the screen values, then inits snake and food with reInit. Finally then calls gameLoop to update the screen
+     */
     @Override
     public void start(Stage primaryStage) {
-        
-    	Board board = new Board();
-    	Rectangle snake = new Rectangle();
-    	food = new Rectangle();
-         root = new Group(); 
-        snakeLengthText = new Text();
-
-        Snake.snakeInit(snake);
-        Food.initFood(food);
-        Scoreboard.initSnakeLengthText(snakeLengthText);
-        
-        root.getChildren().add(snake);
-        root.getChildren().add(food);
-        root.getChildren().add(snakeLengthText);
+        	// Move to Scoreboard class -> Text snakeLengthText = new Text();
+        root = new Group(); 
+        root.getChildren().add(Snake.getSnakeHead());
+        root.getChildren().add(Food.food);
+        //root.getChildren().add(snakeLengthText);
         
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
         
@@ -39,15 +31,19 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         
-        board.setScene(scene);
+        Board.board.setScene(scene);
         
-        //KeyListeners
+        reInit();
         Movement.moveDirection(scene);
-        Movement.gameLoop(scene);
+        Movement.gameLoop();
     }
     
+    /**
+     * Resets Movement variables and dead variable so that the snake can be properly reinitialized by restart(). Removes the children
+     * from the root node starting with index three, because indexes 0 - 3 contain food, snake head, and scoreboard text.
+     */
     private static void cleanup() {
-    	Movement.xOffset = 0;
+        Movement.xOffset = 0;
         Movement.yOffset = 0;
         Movement.dead = false;
         Movement.enter = false;
@@ -55,16 +51,26 @@ public class Main extends Application {
         Snake.getSnakeHead().setTranslateX(0);
         Snake.getSnakeHead().setTranslateY(0);
         
-        root.getChildren().remove(3, root.getChildren().size());
+        //Start at 3 to include text
+        root.getChildren().remove(2, root.getChildren().size());
     }
     
-    public static void restart() {
+    /**
+     * Calls the cleanup method to reset all need variables, then reinitializes the snake head back to its original position, and 
+     * scoreboard back to its initial value.
+     */
+    public static void reInit() {
+        Snake.snakeInit(Snake.getSnakeHead());
+        Food.initFood();
         cleanup();
-    	Snake.snakeInit(Snake.getSnakeHead());
-    	Scoreboard.setSnakeLengthText();
-        System.out.println("ALIVE");
+        
+        	//Scoreboard.setSnakeLengthText();
     }
  
+    /**
+     * launch(args) creates a new application that calls the start() method. Returns and closes the thread once exited out of.
+     * @param args, command line argument
+     */
     public static void main(String[] args) {
         launch(args);
     }
