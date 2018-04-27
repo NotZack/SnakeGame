@@ -1,4 +1,7 @@
+import java.util.ArrayList;
+
 import javafx.scene.Scene;
+import javafx.scene.shape.Rectangle;
 
 class Board {
     static Board board = new Board();
@@ -52,4 +55,5 @@ class Board {
     public static int getScreenWidth() {
         return (int) scene.getWidth();
     }
+
 }
