@@ -76,5 +76,5 @@ class Snake {
         if (combinedSnake.isEmpty()) 
             combinedSnake.add(snakeHead);
     	    return combinedSnake.get(0);
-    }
+    	}
 }

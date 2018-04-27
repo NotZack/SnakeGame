@@ -26,6 +26,7 @@ public class Main extends Application {
         primaryStage.show();
         
         Board.board.setScene(scene);
+        Scoreboard.initSnakeLengthText();
         
         reInit();
         Movement.moveDirection(scene);
@@ -37,10 +38,9 @@ public class Main extends Application {
      * from the root node starting with index three, because indexes 0 - 3 contain food, snake head, and scoreboard text.
      */
     private static void cleanup() {
-        Movement.xOffset = 0;
-        Movement.yOffset = 0;
+        Movement.xOffset = 0; Movement.yOffset = 0;
         Movement.dead = false;
-        Movement.enter = false;
+        Movement.up = false; Movement.down = false; Movement.left = false; Movement.right = false; Movement.enter = false;
         Movement.snakeSpeed = 25_000_000;
         
         Snake.getSnakeHead().setTranslateX(0);

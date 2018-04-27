@@ -5,6 +5,7 @@ import javafx.scene.shape.Rectangle;
 
 public class Movement {
     
+	//Key pressed fields
     public static boolean up, down, left, right, enter;
     
     //The x and y offset of the snake from the initial x and y coordinates
@@ -28,10 +29,10 @@ public class Movement {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             if(!dead) {
                 switch (key.getCode()) {
-                    case UP: if(!down) {up = true; down = false;}left = false; right = false; break;
-                    case DOWN: if(!up) {down = true; up = false;} left = false; right = false; break;
-                    case LEFT: if(!right) {left = true; right = false;} up = false; down = false; break;
-                    case RIGHT: if(!left) {right = true; left = false;} up = false; down = false;  break;
+                    case UP: if(!down ) {up = true; down = false;} left = false; right = false; break; 
+                    case DOWN: if(!up) {down = true; up = false;} left = false; right = false; break; 
+                    case LEFT: if(!right) {left = true; right = false;} up = false; down = false; break; 
+                    case RIGHT: if(!left) {right = true; left = false;} up = false; down = false; break; 
                     case ENTER: enter = true; break;
                     default: break;
                 }
@@ -42,10 +43,11 @@ public class Movement {
                     default: break;
                 }
             }
+            
         });
     }
-    
-    /**
+
+	/**
      * Declares an animation timer that runs for every 100_000_000 - snakeSpeed milliseconds. Checks if direction key and enter key
      * values are true, then increases the corresponding xOffset/yOffset or, if enter is true, reInits. Then calls the update methods
      * checkCollision, and moveSnake.
@@ -55,19 +57,21 @@ public class Movement {
         
         AnimationTimer timer = new AnimationTimer() {
             private long lastUpdate = 0 ;
-            
+
             @Override
             public void handle(long frameTime) {
                 if (frameTime - lastUpdate >= (100_000_000 - snakeSpeed)) {
                     if(!dead) {
-                        if (up) yOffset -= 25;
-                        if (down) yOffset += 25;
-                        if (right) xOffset += 25;
-                        if (left) xOffset -= 25;
+                        if (up) {yOffset -= 25;}
+                        if (down) {yOffset += 25;}
+                        if (right) {xOffset += 25;}
+                        if (left) {xOffset -= 25;}
                         if (enter) Main.reInit();
                         
+                        if(Snake.combinedSnake.size()>1)System.out.println("Second Y : " + (Snake.combinedSnake.get(1).getY() + Snake.combinedSnake.get(1).getLayoutY()));
                         checkCollision();
                         moveSnake(xOffset, yOffset);
+                        
                     }
                     else if (enter) 
                         Main.reInit();
@@ -76,6 +80,8 @@ public class Movement {
                 }
                 
             }
+
+			
         };
         timer.start();
     }
@@ -89,7 +95,7 @@ public class Movement {
     private static void moveSnake(int xOffset, int yOffset) {
         if (!dead) {
 	        for(int i = Snake.combinedSnake.size() - 1; i > -1; i--) {
-	            if(i == 0) 
+	            if(i == 0)
 	            	    Snake.getSnakeHead().relocate(Snake.getSnakeHead().getX() + xOffset, Snake.getSnakeHead().getY() + yOffset);
 	            else 
 	                Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i - 1).getX() + Snake.combinedSnake.get(i - 1).getLayoutX(), Snake.combinedSnake.get(i - 1).getY() + Snake.combinedSnake.get(i - 1).getLayoutY());
@@ -112,12 +118,9 @@ public class Movement {
             (currentY <= Board.getYtopBoundary()) ||
             (currentY >= Board.getYbottomBoundary() - 50 ) ) 
         {
-            up = false; down = false; left = false; right = false;
             dead = true;
             Scoreboard.setSnakeLengthText();
         }
-        else 
-            dead = false;
         
         //Food collision
         if (currentX == Food.food.getX() && currentY == Food.food.getY()) {
@@ -131,7 +134,6 @@ public class Movement {
         //Self collision iterates through every chunk of the snake and checks if it intersecting with the head
         for(int i = 1; i < Snake.combinedSnake.size(); i++) {
         	if( (currentX == (Snake.combinedSnake.get(i).getX() + Snake.combinedSnake.get(i).getLayoutX())) && ( currentY == (Snake.combinedSnake.get(i).getY() + Snake.combinedSnake.get(i).getLayoutY()) ) ) {
-        		up = false; down = false; left = false; right = false;
                 dead = true;
                 Scoreboard.setSnakeLengthText();
         	}
@@ -148,4 +150,5 @@ public class Movement {
         else if(right) return "Right";
         else return "N/A";
     }
+
 }

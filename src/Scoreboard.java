@@ -6,7 +6,7 @@ public class Scoreboard {
 	
 	static Text snakeLengthText = new Text();
 	
-	public static void initSnakeLengthText(Text snakeLengthText) {
+	public static void initSnakeLengthText() {
 		snakeLengthText.setFont(new Font(20));
         snakeLengthText.setText("Snake Length : " + Snake.getLength());
         snakeLengthText.setX(50);
