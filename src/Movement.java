@@ -1,7 +1,6 @@
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Movement {
@@ -77,6 +76,7 @@ public class Movement {
         };
         timer.start();
     }
+    
     /**
      * Defines a for loop that starts from the last index (last chunk) of the snake, relocating it to the previous chunk of the snake
      * by adding the previous chunk's x/y and layoutX/layoutY.
@@ -85,12 +85,12 @@ public class Movement {
      */
     private static void moveSnake(int xOffset, int yOffset) {
         if (!dead) {
-            for(int i = Snake.combinedSnake.size() - 1; i > -1; i--) {
-                if(i == 0) 
-                	    Snake.getSnakeHead().relocate(Snake.getSnakeHead().getX() + xOffset, Snake.getSnakeHead().getY() + yOffset);
-                else 
-                    Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i - 1).getX() + Snake.combinedSnake.get(i - 1).getLayoutX(), Snake.combinedSnake.get(i - 1).getY() + Snake.combinedSnake.get(i - 1).getLayoutY());
-            }
+	        for(int i = Snake.combinedSnake.size() - 1; i > -1; i--) {
+	            if(i == 0) 
+	            	    Snake.getSnakeHead().relocate(Snake.getSnakeHead().getX() + xOffset, Snake.getSnakeHead().getY() + yOffset);
+	            else 
+	                Snake.combinedSnake.get(i).relocate(Snake.combinedSnake.get(i - 1).getX() + Snake.combinedSnake.get(i - 1).getLayoutX(), Snake.combinedSnake.get(i - 1).getY() + Snake.combinedSnake.get(i - 1).getLayoutY());
+	        }
         }
             
     }
@@ -100,8 +100,8 @@ public class Movement {
      * itself.
      */
     private static void checkCollision() {
-        	double currentX = Snake.getSnakeHead().getX() + Snake.getSnakeHead().getLayoutX();
-        	double currentY = Snake.getSnakeHead().getY() + Snake.getSnakeHead().getLayoutY();
+    	double currentX = Snake.getSnakeHead().getX() + Snake.getSnakeHead().getLayoutX();
+    	double currentY = Snake.getSnakeHead().getY() + Snake.getSnakeHead().getLayoutY();
         	
         	//Wall collision
         if( (currentX <= Board.getXleftBoundary()) ||
@@ -111,29 +111,30 @@ public class Movement {
         {
             up = false; down = false; left = false; right = false;
             dead = true;
-            //Scoreboard.setSnakeLengthText();
+            Scoreboard.setSnakeLengthText();
         }
         else 
             dead = false;
         
         //Food collision
         if (currentX == Food.food.getX() && currentY == Food.food.getY()) {
-        	    Rectangle snakeChunk = new Rectangle();
-        	    Snake.setNewSnakeChunk(snakeChunk, getDirection());
-    
-        	    Food.initFood();
-        	    //Scoreboard.setSnakeLengthText();
+    	    Rectangle snakeChunk = new Rectangle();
+    	    Snake.setNewSnakeChunk(snakeChunk, getDirection());
+
+    	    Food.initFood();
+    	    Scoreboard.setSnakeLengthText();
         }
         
         //Self collision iterates through every chunk of the snake and checks if it intersecting with the head
         for(int i = 1; i < Snake.combinedSnake.size(); i++) {
-            	if( (currentX == (Snake.combinedSnake.get(i).getX() + Snake.combinedSnake.get(i).getLayoutX())) && ( currentY == (Snake.combinedSnake.get(i).getY() + Snake.combinedSnake.get(i).getLayoutY()) ) ) {
-            		up = false; down = false; left = false; right = false;
+        	if( (currentX == (Snake.combinedSnake.get(i).getX() + Snake.combinedSnake.get(i).getLayoutX())) && ( currentY == (Snake.combinedSnake.get(i).getY() + Snake.combinedSnake.get(i).getLayoutY()) ) ) {
+        		up = false; down = false; left = false; right = false;
                 dead = true;
-                //Scoreboard.setSnakeLengthText();
-            	}
+                Scoreboard.setSnakeLengthText();
+        	}
         }
     }
+    
     /**
      * @returns a string representation of the direction that the head is going in.
      */

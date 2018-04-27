@@ -2,15 +2,10 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
  
 public class Main extends Application {
-    
-    //Fields because food, root, and snakeLengthText need to be updated from other classes
-    //static Rectangle food;
+
     static Group root;
     
     /**
@@ -19,11 +14,10 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        	// Move to Scoreboard class -> Text snakeLengthText = new Text();
         root = new Group(); 
         root.getChildren().add(Snake.getSnakeHead());
         root.getChildren().add(Food.food);
-        //root.getChildren().add(snakeLengthText);
+        root.getChildren().add(Scoreboard.snakeLengthText);
         
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
         
@@ -50,9 +44,8 @@ public class Main extends Application {
         
         Snake.getSnakeHead().setTranslateX(0);
         Snake.getSnakeHead().setTranslateY(0);
-        
-        //Start at 3 to include text
-        root.getChildren().remove(2, root.getChildren().size());
+
+        root.getChildren().remove(3, root.getChildren().size());
     }
     
     /**
@@ -63,8 +56,7 @@ public class Main extends Application {
         Snake.snakeInit(Snake.getSnakeHead());
         Food.initFood();
         cleanup();
-        
-        	//Scoreboard.setSnakeLengthText();
+        Scoreboard.setSnakeLengthText();
     }
  
     /**
