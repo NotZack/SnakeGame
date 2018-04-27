@@ -31,7 +31,7 @@ class Snake {
     
     /**
      * Creates a new snake chunk from a rectangle in the correct direction from the last index of the combinedSnake list. 
-     * It then sets the chunk's variables and adds it to the root node.
+     * It then sets the chunk's variables and adds it to the root node. Also increases snake speed.
      * @param chunk, the rectangle that is added to the snake as a chunk
      * @param direction, the direction that the chunk is added on to
      */
@@ -52,12 +52,13 @@ class Snake {
         chunk.setY(combinedSnake.get(combinedSnake.size()-1).getY() + directionYmod); 
         chunk.setWidth(SNAKECHUNK); 
         chunk.setHeight(SNAKECHUNK); 
-        chunk.setFill(Color.GREEN);
+        chunk.setFill(Food.randomColor);
 	    combinedSnake.add(chunk);
 	    
 	    Main.root.getChildren().add(chunk);
 	    
-	    Movement.snakeSpeed += 5_000_000;
+	    if(combinedSnake.size() % 5 == 0)
+	        Movement.snakeSpeed += 5_000_000;
        
     }
 

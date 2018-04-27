@@ -6,6 +6,7 @@ import javafx.scene.shape.Rectangle;
 class Food extends Rectangle {
 
     static Rectangle food = new Rectangle();
+    static Color randomColor;
     /**
      * Initializes the food rectangle, setting its x, y, width, height, and color.
      * @param food, the first and only food rectangle in the root node
@@ -15,7 +16,8 @@ class Food extends Rectangle {
         food.setY(getValidXY(Board.getScreenHeight())); 
         food.setWidth(25); 
         food.setHeight(25); 
-        food.setFill(Color.ORANGE);
+        randomColor = randomizeColor();
+        food.setFill(randomColor);
     }
     
     /**
@@ -28,5 +30,12 @@ class Food extends Rectangle {
         	Random rand = new Random();
         	int math =  (rand.nextInt( (int) ((widthHeight / 25) - 2) ) + 1) * 25;
 		return math;
+    }
+    
+    public static Color randomizeColor() {
+        Random rand = new Random();
+        Random rand2 = new Random();
+        Random rand3 = new Random();
+        return Color.rgb(rand.nextInt(256), rand2.nextInt(256), rand3.nextInt(256));
     }
 }

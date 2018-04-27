@@ -2,9 +2,6 @@ import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
  
 public class Main extends Application {
@@ -23,6 +20,7 @@ public class Main extends Application {
         root = new Group(); 
         root.getChildren().add(Snake.getSnakeHead());
         root.getChildren().add(Food.food);
+
         //root.getChildren().add(snakeLengthText);
         
         Scene scene = new Scene(root, 800, 600, Color.BLACK);
