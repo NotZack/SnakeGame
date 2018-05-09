@@ -9,26 +9,23 @@ import javafx.stage.Stage;
  
 public class Main extends Application {
 
-    static Group root = new Group();
+    public static Group root = new Group();
 
     /**
      * adds the snake food and scoreboard objects into the root node and then sets the scene and scene variables. Then starts the game loop
      */
     @Override
     public void start(Stage primaryStage) {
-        root.getChildren().add(Snake.newSnakeChunk());
-        root.getChildren().add(Food.newFood());
-        root.getChildren().add(Scoreboard.initSnakeText());
         
-        Scene scene = new Scene(root, 800, 600, Color.BLACK);
-        
-        Board.setScene(scene);
-        Food.setFood();
+        Scene scene = new Scene(root, 200, 150, Color.BLACK);
         
         primaryStage.setFullScreen(true);
         primaryStage.setScene(scene);
         primaryStage.show();
 
+        Board.setScene(scene);
+        reInit();
+        
         Movement.gameLoop(scene);
     }
 
@@ -38,12 +35,15 @@ public class Main extends Application {
     public static void reInit() {
         Movement.direction = "";
         Snake.snakeChunks = new ArrayList<Rectangle>();
+        populateChildren();
+        Food.setFood();
+    }
+    
+    private static void populateChildren() {
         root.getChildren().clear();
         root.getChildren().add(Snake.newSnakeChunk());
         root.getChildren().add(Food.newFood());
-        root.getChildren().add(Scoreboard.initSnakeText());
-        Food.setFood();
-        
+        root.getChildren().addAll(Scoreboard.initScoreboardText());
     }
 
     /**

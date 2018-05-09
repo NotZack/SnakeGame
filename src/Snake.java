@@ -1,16 +1,18 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class Snake {
+    
     //List contains all of the snake chunks
     public static ArrayList<Rectangle> snakeChunks = new ArrayList<Rectangle>();
-    
-    private static final double STARTINGX = 200;
-    private static final double STARTINGY = 200;
 
-    //creates a new snake chunk
+    /**
+     * creates a new rectangle, adds it to the chunks list, then calls the initialize
+     * @return
+     */
     public static Rectangle newSnakeChunk() {
         Rectangle chunk = new Rectangle();
         snakeChunks.add(chunk);
@@ -18,24 +20,27 @@ public class Snake {
         return chunk;
     }
     
-    //sets chunk variables
+    /**
+     * sets the initial coordinates etc. of the chunk
+     * @param the rectangle that is a chunk of the snake
+     */
     public static void chunkInit(Rectangle chunk) {
-        if(snakeChunks.indexOf(chunk) == 0) {
-            chunk.setLayoutX(0);
-            chunk.setLayoutY(0);
+        if(snakeChunks.indexOf(chunk) == 0) 
             chunk.setFill(Color.GREEN);
-        }
-        else {
-            chunk.setLayoutX(Movement.getDirectionOffset());
-            chunk.setLayoutY(Movement.getDirectionOffset());
+        else 
             chunk.setFill(Food.food.getFill());
-        }
         
-        chunk.setX(STARTINGX);
-        chunk.setY(STARTINGY);
-        chunk.setWidth(25);
-        chunk.setHeight(25);
+        chunk.setLayoutX(Movement.getDirectionOffset());
+        chunk.setLayoutY(Movement.getDirectionOffset());
         
+        chunk.setX(Board.chunkSize * new Random().nextInt((int) (Board.getWidth() / Board.chunkSize)));
+        chunk.setY(Board.chunkSize * new Random().nextInt((int) (Board.getHeight() / Board.chunkSize)));
+
+        chunk.setWidth(Board.chunkSize);
+        chunk.setHeight(Board.chunkSize);
+        
+        //Sees if this is has been the longest snake
+        Scoreboard.setHighScore();
     }
 
 }

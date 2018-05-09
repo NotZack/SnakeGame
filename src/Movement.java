@@ -6,7 +6,7 @@ public class Movement {
 
     public static String direction = "";
     
-    private static long snakeSpeed = 0_000_000;
+    private static long snakeSpeed = -50_000_000;
 
     /**
      * The main game loop on every tick, draws, then updates, then checks for collisions.
@@ -22,10 +22,8 @@ public class Movement {
             @Override
             public void handle(long frameTime) {
                 if (frameTime - lastUpdate >= (100_000_000 - snakeSpeed) ) {
-                        draw();
-                        update();
-                        checkCollision();
-                        lastUpdate = frameTime;
+                    tick();
+                    lastUpdate = frameTime;
                 }
             }
         };
@@ -41,19 +39,28 @@ public class Movement {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
             switch (key.getCode()) {
                 case UP: 
-                    if (!direction.equals("down")) direction = "up"; draw(); update(); checkCollision(); break;
+                    if (!direction.equals("down")) direction = "up"; tick(); break;
                 case DOWN:
-                    if (!direction.equals("up")) direction = "down"; draw(); update(); checkCollision(); break;
+                    if (!direction.equals("up")) direction = "down"; tick(); break;
                 case LEFT: 
-                    if (!direction.equals("right")) direction = "left"; draw(); update(); checkCollision(); break;
+                    if (!direction.equals("right")) direction = "left"; tick(); break;
                 case RIGHT: 
-                    if (!direction.equals("left")) direction = "right"; draw(); update(); checkCollision(); break;
+                    if (!direction.equals("left")) direction = "right"; tick(); break;
                 case ENTER: 
                     Main.reInit();
-                    
-                default: break;
+                default: 
+                    break;
             }
         });
+    }
+    
+    /**
+     * calls the methods that execute movement.
+     */
+    private static void tick() {
+        draw();
+        update();
+        checkCollision();
     }
     
     /**
@@ -62,13 +69,13 @@ public class Movement {
     private static void update() {
         switch(direction) {
             case "up": 
-                Snake.snakeChunks.get(0).setLayoutY(Snake.snakeChunks.get(0).getLayoutY() -25); break;
+                Snake.snakeChunks.get(0).setLayoutY(Snake.snakeChunks.get(0).getLayoutY() - Board.chunkSize); break;
             case "down": 
-                Snake.snakeChunks.get(0).setLayoutY(Snake.snakeChunks.get(0).getLayoutY() + 25); break;
+                Snake.snakeChunks.get(0).setLayoutY(Snake.snakeChunks.get(0).getLayoutY() + Board.chunkSize); break;
             case "left": 
-                Snake.snakeChunks.get(0).setLayoutX(Snake.snakeChunks.get(0).getLayoutX() -25); break;
+                Snake.snakeChunks.get(0).setLayoutX(Snake.snakeChunks.get(0).getLayoutX() - Board.chunkSize); break;
             case "right": 
-                Snake.snakeChunks.get(0).setLayoutX(Snake.snakeChunks.get(0).getLayoutX() + 25); break;
+                Snake.snakeChunks.get(0).setLayoutX(Snake.snakeChunks.get(0).getLayoutX() + Board.chunkSize); break;
         }
     }
 
@@ -77,13 +84,20 @@ public class Movement {
      * the head is updated only by its own layouts.
      */
     private static void draw() {
+            double relocateX;
+            double relocateY;
             for(int i = Snake.snakeChunks.size() - 1; i > -1; i--) {
-                if(i == 0)
-                    Snake.snakeChunks.get(i).relocate(Snake.snakeChunks.get(i).getX() + Snake.snakeChunks.get(i).getLayoutX(),
-                                                      Snake.snakeChunks.get(i).getY() + Snake.snakeChunks.get(i).getLayoutY());
-                else 
-                    Snake.snakeChunks.get(i).relocate(Snake.snakeChunks.get(i - 1).getX() + Snake.snakeChunks.get(i - 1).getLayoutX(),
-                                                      Snake.snakeChunks.get(i - 1).getY() + Snake.snakeChunks.get(i - 1).getLayoutY());
+                if(i == 0) {
+                    relocateX = Snake.snakeChunks.get(i).getX() + Snake.snakeChunks.get(i).getLayoutX();
+                    relocateY = Snake.snakeChunks.get(i).getY() + Snake.snakeChunks.get(i).getLayoutY();
+                    Snake.snakeChunks.get(i).relocate(relocateX, relocateY);
+                }
+                else {
+                    relocateX = Snake.snakeChunks.get(i - 1).getX() + Snake.snakeChunks.get(i - 1).getLayoutX();
+                    relocateY = Snake.snakeChunks.get(i - 1).getY() + Snake.snakeChunks.get(i - 1).getLayoutY();
+                    
+                    Snake.snakeChunks.get(i).relocate(relocateX, relocateY);
+                }
             }
     }
     
@@ -95,10 +109,10 @@ public class Movement {
         double currentY = Snake.snakeChunks.get(0).getY() + Snake.snakeChunks.get(0).getLayoutY();
             
         //Wall collision
-        if( (currentX <= Board.getXleftBoundary() - 25) ||
-            (currentX >= Board.getXrightBoundary()) ||  
-            (currentY <= Board.getYtopBoundary() - 25) ||
-            (currentY >= Board.getYbottomBoundary() ) ) 
+        if( (currentX <= Board.getXleftBoundary() - Board.chunkSize) ||
+            (currentX >= Board.getXrightBoundary() - Board.chunkSize ) ||  
+            (currentY <= Board.getYtopBoundary() - Board.chunkSize) ||
+            (currentY >= Board.getYbottomBoundary() - Board.chunkSize) )
         {
             Main.reInit();
         }
@@ -114,9 +128,8 @@ public class Movement {
         
         //Self collision iterates through every chunk of the snake and checks if it intersecting with the head
         for(int i = 2; i < Snake.snakeChunks.size(); i++) {
-            if( (currentX == (Snake.snakeChunks.get(i).getX() + Snake.snakeChunks.get(i).getLayoutX())) && ( currentY == (Snake.snakeChunks.get(i).getY() + Snake.snakeChunks.get(i).getLayoutY()) ) ) {
+            if( (currentX == (Snake.snakeChunks.get(i).getX() + Snake.snakeChunks.get(i).getLayoutX())) && ( currentY == (Snake.snakeChunks.get(i).getY() + Snake.snakeChunks.get(i).getLayoutY()) ) ) 
                 Main.reInit();
-            }
         }
         
     }
@@ -128,13 +141,13 @@ public class Movement {
     public static double getDirectionOffset() {
         switch(direction) {
             case "up": 
-                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutY() + 25;
+                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutY() + Board.chunkSize;
             case "down": 
-                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutY() - 25;
+                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutY() - Board.chunkSize;
             case "left": 
-                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutX() + 25;
+                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutX() + Board.chunkSize;
             case "right": 
-                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutX() - 25;
+                return Snake.snakeChunks.get(Snake.snakeChunks.size()-1).getLayoutX() - Board.chunkSize;
         }
         return 0.0;
     }
