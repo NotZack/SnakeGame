@@ -1,13 +1,18 @@
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
 
-public class Board {
+public class Board implements sceneInterface {
 
     private static Scene scene;
     
-    //the lower the number the harder it is; the smaller the snake is
-    public static int difficulty = 3;
+    //the lower the number the harder it is; the smaller the snake is maxes out at 9
+    public static int difficulty = 1;
     public static double chunkSize = 25;
     
+    /**
+     * sets a local scene to be used for bordering and chunks
+     * @param scene the one and only scene
+     */
     public static void setScene(Scene scene) {
         Board.scene = scene;
         getChunkSize();
@@ -44,7 +49,7 @@ public class Board {
     }
     
     /**
-     * sets the optimal chunk size for the snake
+     * sets the optimal chunk size for the snake based of of the screen size
      */
     private static void getChunkSize() {
         boolean acceptableChunk = false;
@@ -58,6 +63,12 @@ public class Board {
             else 
                 chunkSize --;
         }
+    }
+
+    public static void gameOverScene(String deathType) {
+        Movement.direction = "";
+        Snake.dead = true;
+        Main.root.getChildren().add(Scoreboard.setDeathText(deathType));
     }
 
 }

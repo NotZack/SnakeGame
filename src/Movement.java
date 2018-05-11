@@ -37,6 +37,7 @@ public class Movement {
      */
     public static void moveSnake(Scene scene) {
         scene.addEventHandler(KeyEvent.KEY_PRESSED, (key) -> {
+            if(!Snake.dead)
             switch (key.getCode()) {
                 case UP: 
                     if (!direction.equals("down")) direction = "up"; tick(); break;
@@ -51,6 +52,8 @@ public class Movement {
                 default: 
                     break;
             }
+            else if (key.getCode().isArrowKey())
+                Main.reInit();
         });
     }
     
@@ -114,7 +117,7 @@ public class Movement {
             (currentY <= Board.getYtopBoundary() - Board.chunkSize) ||
             (currentY >= Board.getYbottomBoundary() - Board.chunkSize) )
         {
-            Main.reInit();
+            Board.gameOverScene("wall");
         }
         
         //Food collision
@@ -129,7 +132,7 @@ public class Movement {
         //Self collision iterates through every chunk of the snake and checks if it intersecting with the head
         for(int i = 2; i < Snake.snakeChunks.size(); i++) {
             if( (currentX == (Snake.snakeChunks.get(i).getX() + Snake.snakeChunks.get(i).getLayoutX())) && ( currentY == (Snake.snakeChunks.get(i).getY() + Snake.snakeChunks.get(i).getLayoutY()) ) ) 
-                Main.reInit();
+                Board.gameOverScene("self");
         }
         
     }

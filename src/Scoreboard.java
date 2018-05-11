@@ -1,11 +1,12 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Scanner;
 
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -16,7 +17,7 @@ public class Scoreboard {
     private static Text snakeLengthText;
     private static Text snakeHighScore;
     
-    private static int highScore = getHighScore();
+    private static int highScore = getHighScore();;
     
     //The list that children are added from
     static ArrayList<Text> scoreboard = new ArrayList<Text>();
@@ -34,7 +35,8 @@ public class Scoreboard {
         snakeHighScore = initText(new Text());
         snakeHighScore.setText("Highscore : " + highScore);
         
-        getHighScore();
+        
+        setHighScore();
         return scoreboard;
     }
     
@@ -65,11 +67,11 @@ public class Scoreboard {
      * checks to see if current snake is the highscore, then changes the score accordingly
      */
     public static void setHighScore() {
-        if (highScore < Snake.snakeChunks.size()) {
+        if (highScore <= Snake.snakeChunks.size()) {
             highScore = Snake.snakeChunks.size();
             
             try {
-                Files.write(Paths.get("highscore.txt"), Arrays.asList(Integer.toString(highScore)), Charset.forName("UTF-8"));
+                Files.write(Paths.get("highscore.txt"), Arrays.asList(encrypt(Integer.toString(highScore))), Charset.forName("UTF-8"));
             } 
             catch (IOException e) {
                 e.printStackTrace();
@@ -78,21 +80,72 @@ public class Scoreboard {
             
     }
     
+    public static Text setDeathText(String deathType) {
+        Text deathText = new Text();
+        deathText.setFont(new Font(20));
+        if (Snake.snakeChunks.size() == 1)
+            deathText.setText("GAME OVER You were " + Snake.snakeChunks.size() + " chunk long." + "\n          Are you even trying?");
+        else
+            if(deathType.equals("wall"))
+                deathText.setText("GAME OVER You were " + Snake.snakeChunks.size() + " chunks long." + "\n        Where are you trying to go?");
+            else if(deathType.equals("self"))
+                deathText.setText("GAME OVER You were " + Snake.snakeChunks.size() + " chunks long." + "\n        Stop hitting yourself?");
+        
+        deathText.setX((Board.getWidth() / 2) - deathText.getText().length() - 100);
+        deathText.setY((Board.getHeight() / 2));
+        deathText.setFill(Color.WHITE);
+        return deathText;
+    }
     /**
      * checks the highscore.txt file and returns the first line which is the high score
      * @returns the highScore
      */
     public static int getHighScore() {
+        
         try {
-            BufferedReader highScoreFile = new BufferedReader(new FileReader("highscore.txt"));
-            int score = Integer.parseInt(highScoreFile.readLine());
+            Scanner highScoreFile = new Scanner(new File("highscore.txt"));
+
+            if(!highScoreFile.hasNextLine()) {
+                highScoreFile.close();
+                return 1;
+            }
+            
+            int score = Integer.parseInt(decrypt(highScoreFile.nextLine()));
+            highScoreFile.reset();
             highScoreFile.close();
             return score;
+
         } 
         catch (IOException e) {
             e.printStackTrace();
         }
         return 0;
     }
+    
+    public static String encrypt(String score) {
+        String b64encoded = Base64.getEncoder().encodeToString(score.getBytes());
+
+        // reverse the string
+        String reverse = new StringBuffer(b64encoded).reverse().toString();
+
+        StringBuilder tmp = new StringBuilder();
+        final int OFFSET = 4;
+        for (int i = 0; i < reverse.length(); i++) 
+           tmp.append((char)(reverse.charAt(i) + OFFSET));
+
+        return tmp.toString();
+    }
+    
+    public static String decrypt(String score) {
+        StringBuilder tmp = new StringBuilder();
+        final int OFFSET = 4;
+        for (int i = 0; i < score.length(); i++)
+           tmp.append((char)(score.charAt(i) - OFFSET));
+
+        String reversed = new StringBuffer(tmp.toString()).reverse().toString();
+        return new String(Base64.getDecoder().decode(reversed));
+     }
+
+    
 
 }

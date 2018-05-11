@@ -8,10 +8,11 @@ public class Snake {
     
     //List contains all of the snake chunks
     public static ArrayList<Rectangle> snakeChunks = new ArrayList<Rectangle>();
+    public static boolean dead = false;
 
     /**
      * creates a new rectangle, adds it to the chunks list, then calls the initialize
-     * @return
+     * @returns the chunk to be initialized and added to the list
      */
     public static Rectangle newSnakeChunk() {
         Rectangle chunk = new Rectangle();
@@ -25,7 +26,7 @@ public class Snake {
      * @param the rectangle that is a chunk of the snake
      */
     public static void chunkInit(Rectangle chunk) {
-        if(snakeChunks.indexOf(chunk) == 0) 
+        if (snakeChunks.indexOf(chunk) == 0) 
             chunk.setFill(Color.GREEN);
         else 
             chunk.setFill(Food.food.getFill());
@@ -39,7 +40,7 @@ public class Snake {
         chunk.setWidth(Board.chunkSize);
         chunk.setHeight(Board.chunkSize);
         
-        //Sees if this is has been the longest snake
+        //sees if this is has been the longest snake
         Scoreboard.setHighScore();
     }
 

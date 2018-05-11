@@ -40,8 +40,9 @@ public class Food {
         //checks the validity of the randomized possible food position
         while(!valid) {       
             for(int i = 0; i < Snake.snakeChunks.size(); i++) {
-                if( (validXY == (Snake.snakeChunks.get(i).getX() + Snake.snakeChunks.get(i).getLayoutX())) && xy.equals("x") )
+                if( (validXY == (Snake.snakeChunks.get(i).getX() + Snake.snakeChunks.get(i).getLayoutX())) && xy.equals("x") ) {
                     validXY = newPossibleXY(widthHeight);
+                }
                 else if ( (validXY == (Snake.snakeChunks.get(i).getY() + Snake.snakeChunks.get(i).getLayoutY())) && xy.equals("y") )
                     validXY = newPossibleXY(widthHeight);
                 else {
@@ -59,7 +60,10 @@ public class Food {
      * @return a semi-randomized double that represents a possible X/Y position for the food, valid or not
      */
     private static double newPossibleXY(double widthHeight) {
-        return ((new Random().nextInt( (int) ((widthHeight / Board.chunkSize) - 2) ) + 1) * Board.chunkSize);
+        if(((widthHeight / Board.chunkSize) - 2) > 0)
+            return ((new Random().nextInt( (int) ((widthHeight / Board.chunkSize) - 2) ) + 1) * Board.chunkSize);
+        else 
+            return 0;
     }
     
     /**

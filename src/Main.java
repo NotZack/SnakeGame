@@ -1,11 +1,14 @@
 import java.util.ArrayList;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
  
 public class Main extends Application {
 
@@ -22,6 +25,15 @@ public class Main extends Application {
         primaryStage.setFullScreen(true);
         primaryStage.setScene(scene);
         primaryStage.show();
+        
+        //closes the application correctly when exiting out
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent t) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
 
         Board.setScene(scene);
         reInit();
@@ -34,11 +46,15 @@ public class Main extends Application {
      */
     public static void reInit() {
         Movement.direction = "";
+        Snake.dead = false;
         Snake.snakeChunks = new ArrayList<Rectangle>();
         populateChildren();
         Food.setFood();
     }
     
+    /**
+     * adds all the needed children into the root node to be drawn
+     */
     private static void populateChildren() {
         root.getChildren().clear();
         root.getChildren().add(Snake.newSnakeChunk());
