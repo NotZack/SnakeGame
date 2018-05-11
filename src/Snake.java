@@ -8,6 +8,8 @@ public class Snake {
     
     //List contains all of the snake chunks
     public static ArrayList<Rectangle> snakeChunks = new ArrayList<Rectangle>();
+    
+    //Whether the snake is dead or not. Set by dying
     public static boolean dead = false;
 
     /**

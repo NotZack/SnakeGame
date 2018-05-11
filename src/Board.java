@@ -1,5 +1,4 @@
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
 
 public class Board implements sceneInterface {
 
@@ -65,6 +64,10 @@ public class Board implements sceneInterface {
         }
     }
 
+    /**
+     * freezes the game when snake dies. Then adds the death text to the root node
+     * @param deathType
+     */
     public static void gameOverScene(String deathType) {
         Movement.direction = "";
         Snake.dead = true;

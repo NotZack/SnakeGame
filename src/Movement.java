@@ -32,7 +32,8 @@ public class Movement {
 
     /**
      * Gets key input sets the direction and then updates, draws, and checks collision in that direction. This is to disallow
-     * the improper updating of keys.
+     * the improper updating of keys. Does not allow for movement when a snake is dead. If the snake is dead and an arrow key is pressed
+     * then the game will reset.
      * @param scene, the only scene on the stage
      */
     public static void moveSnake(Scene scene) {
@@ -105,7 +106,7 @@ public class Movement {
     }
     
     /**
-     * Checks if the snake head is colliding with the wall, food, or itself
+     * Checks if the snake head is colliding with the wall, food, or itself. If it is, call game over or reset the food.
      */
     private static void checkCollision() {
         double currentX = Snake.snakeChunks.get(0).getX() + Snake.snakeChunks.get(0).getLayoutX();
@@ -139,7 +140,7 @@ public class Movement {
     
     /**
      * Sets the snake chunk x or y +-25 based on the direction that the snake is moving in.
-     * @return the new layout (translation)
+     * @returns the new layout (translation)
      */
     public static double getDirectionOffset() {
         switch(direction) {

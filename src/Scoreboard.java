@@ -8,14 +8,25 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Scanner;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 public class Scoreboard {
 
+    //Score text that is always visible
     private static Text snakeLengthText;
     private static Text snakeHighScore;
+    
+    //Fields used for encryption
+    private static final String encryptionKey           = "ABCDEFGHIJKLMNOP";
+    private static final String characterEncoding       = "UTF-8";
+    private static final String cipherTransformation    = "AES/CBC/PKCS5PADDING";
+    private static final String aesEncryptionAlgorithem = "AES";
     
     private static int highScore = getHighScore();;
     
@@ -80,9 +91,15 @@ public class Scoreboard {
             
     }
     
+    /**
+     * sets the text that is seen when the snake dies
+     * @param deathType, how the snake died, used to allow for different death messages
+     * @returns the deathText object so it can be added into the root node
+     */
     public static Text setDeathText(String deathType) {
         Text deathText = new Text();
         deathText.setFont(new Font(20));
+        
         if (Snake.snakeChunks.size() == 1)
             deathText.setText("GAME OVER You were " + Snake.snakeChunks.size() + " chunk long." + "\n          Are you even trying?");
         else
@@ -96,6 +113,7 @@ public class Scoreboard {
         deathText.setFill(Color.WHITE);
         return deathText;
     }
+    
     /**
      * checks the highscore.txt file and returns the first line which is the high score
      * @returns the highScore
@@ -122,30 +140,49 @@ public class Scoreboard {
         return 0;
     }
     
-    public static String encrypt(String score) {
-        String b64encoded = Base64.getEncoder().encodeToString(score.getBytes());
+    /**
+     * encrypts the highScore into an unreadable mess of characters
+     * @param the highScore being encrypted
+     * @returns the encrypted high score
+     */
+    public static String encrypt(String plainText) {
+        String encryptedText = "";
+        try {
+            Cipher cipher   = Cipher.getInstance(cipherTransformation);
+            byte[] key      = encryptionKey.getBytes(characterEncoding);
+            SecretKeySpec secretKey = new SecretKeySpec(key, aesEncryptionAlgorithem);
+            IvParameterSpec ivparameterspec = new IvParameterSpec(key);
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivparameterspec);
+            byte[] cipherText = cipher.doFinal(plainText.getBytes("UTF8"));
+            Base64.Encoder encoder = Base64.getEncoder();
+            encryptedText = encoder.encodeToString(cipherText);
 
-        // reverse the string
-        String reverse = new StringBuffer(b64encoded).reverse().toString();
-
-        StringBuilder tmp = new StringBuilder();
-        final int OFFSET = 4;
-        for (int i = 0; i < reverse.length(); i++) 
-           tmp.append((char)(reverse.charAt(i) + OFFSET));
-
-        return tmp.toString();
+        } catch (Exception E) {
+             System.err.println("Encrypt Exception : "+E.getMessage());
+        }
+        return encryptedText;
     }
     
-    public static String decrypt(String score) {
-        StringBuilder tmp = new StringBuilder();
-        final int OFFSET = 4;
-        for (int i = 0; i < score.length(); i++)
-           tmp.append((char)(score.charAt(i) - OFFSET));
+    /**
+     * decrypts the encrypted high score into its original not encrypted self
+     * @param the encrypted high score
+     * @return the decrypted high score
+     */
+    public static String decrypt(String encryptedText) {
+        String decryptedText = "";
+        try {
+            Cipher cipher = Cipher.getInstance(cipherTransformation);
+            byte[] key = encryptionKey.getBytes(characterEncoding);
+            SecretKeySpec secretKey = new SecretKeySpec(key, aesEncryptionAlgorithem);
+            IvParameterSpec ivparameterspec = new IvParameterSpec(key);
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivparameterspec);
+            Base64.Decoder decoder = Base64.getDecoder();
+            byte[] cipherText = decoder.decode(encryptedText.getBytes("UTF8"));
+            decryptedText = new String(cipher.doFinal(cipherText), "UTF-8");
 
-        String reversed = new StringBuffer(tmp.toString()).reverse().toString();
-        return new String(Base64.getDecoder().decode(reversed));
-     }
-
-    
-
+        } catch (Exception E) {
+            System.err.println("decrypt Exception : "+E.getMessage());
+        }
+        return decryptedText;
+    }
 }
