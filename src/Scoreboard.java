@@ -23,9 +23,9 @@ public class Scoreboard {
     private static Text snakeHighScore;
     
     //Fields used for encryption
-    private static final String encryptionKey           = "ABCDEFGHIJKLMNOP";
-    private static final String characterEncoding       = "UTF-8";
-    private static final String cipherTransformation    = "AES/CBC/PKCS5PADDING";
+    private static final String encryptionKey = "ABCDEFGHIJKLMNOP";
+    private static final String characterEncoding = "UTF-8";
+    private static final String cipherTransformation = "AES/CBC/PKCS5PADDING";
     private static final String aesEncryptionAlgorithem = "AES";
     
     private static int highScore = getHighScore();;
@@ -34,7 +34,7 @@ public class Scoreboard {
     static ArrayList<Text> scoreboard = new ArrayList<Text>();
     
     /**
-     * creates text that tells the length/highscore/etc of the snake
+     * creates text that tells the length/highscore/etc of the snake and initializes that text
      * @returns the text
      */
     public static ArrayList<Text> initScoreboardText() {
@@ -54,7 +54,7 @@ public class Scoreboard {
     /**
      * sets the basic values of the text, then adds them to the scoreboard list to be added as children
      * @param text, the text that values are being changed
-     * @return the same text
+     * @return the same text as the argument
      */
     private static Text initText(Text text) {
         text.setFont(new Font(20));
@@ -69,13 +69,14 @@ public class Scoreboard {
      * sets the text of the Text objects. Updates every chunk collection
      */
     public static void setSnakeText() {
-        //Overwrites the old text containing the highscore
+        //setText overwrites the old text
         snakeLengthText.setText("Snake Length : " + Snake.snakeChunks.size());
         snakeHighScore.setText("Highscore : " + highScore);
     }
     
     /**
-     * checks to see if current snake is the highscore, then changes the score accordingly
+     * checks to see if current snake is the highscore, and if so, it sets the highScore, then writes it (encrypted) to the 
+     * highscore.txt file.
      */
     public static void setHighScore() {
         if (highScore <= Snake.snakeChunks.size()) {

@@ -1,3 +1,7 @@
+/**
+ * Snake2.0 written by Zackary Nichol Spring 2018
+ */
+
 import java.util.ArrayList;
 
 import javafx.application.Application;

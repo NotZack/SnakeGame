@@ -33,9 +33,11 @@ public class Snake {
         else 
             chunk.setFill(Food.food.getFill());
         
+        //sets the new chunk in the correct direction relative to the end of the snake
         chunk.setLayoutX(Movement.getDirectionOffset());
         chunk.setLayoutY(Movement.getDirectionOffset());
         
+        //puts the snake's coordinates at a random valid location
         chunk.setX(Board.chunkSize * new Random().nextInt((int) (Board.getWidth() / Board.chunkSize)));
         chunk.setY(Board.chunkSize * new Random().nextInt((int) (Board.getHeight() / Board.chunkSize)));
 

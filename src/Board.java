@@ -10,7 +10,7 @@ public class Board implements sceneInterface {
     
     /**
      * sets a local scene to be used for bordering and chunks
-     * @param scene the one and only scene
+     * @param scene, the one and only scene
      */
     public static void setScene(Scene scene) {
         Board.scene = scene;
@@ -18,17 +18,11 @@ public class Board implements sceneInterface {
     }
     
     public static double getWidth() {
-        if(scene != null)
-            return scene.getWidth();
-        else 
-            return 800;
+        return scene.getWidth();
     }
 
     public static double getHeight() {
-        if(scene != null)
-            return scene.getHeight();
-        else
-            return 600;
+        return scene.getHeight();
     }
 
     public static double getXleftBoundary() {
@@ -69,7 +63,6 @@ public class Board implements sceneInterface {
      * @param deathType
      */
     public static void gameOverScene(String deathType) {
-        Movement.direction = "";
         Snake.dead = true;
         Main.root.getChildren().add(Scoreboard.setDeathText(deathType));
     }
