@@ -29,7 +29,7 @@ public class Food {
 
     /**
      * Gets the x and y coordinates that are able to have food drawn to. Not outside the boundaries or in the snake.
-     * @param either the width of height of the screen
+     * @param widthHeight either the width of height of the screen
      * @param xy either the x or y value of the food variable
      * @return a valid x or y coordinate
      */
