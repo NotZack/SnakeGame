@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -134,7 +135,7 @@ public class Scoreboard {
             highScoreFile.close();
             return score;
 
-        } 
+        }
         catch (IOException e) {
             e.printStackTrace();
         }
@@ -143,7 +144,7 @@ public class Scoreboard {
     
     /**
      * encrypts the highScore into an unreadable mess of characters
-     * @param the highScore being encrypted
+     * @param plainText the highScore being encrypted
      * @returns the encrypted high score
      */
     public static String encrypt(String plainText) {
@@ -166,7 +167,7 @@ public class Scoreboard {
     
     /**
      * decrypts the encrypted high score into its original not encrypted self
-     * @param the encrypted high score
+     * @param encryptedText the encrypted high score
      * @return the decrypted high score
      */
     public static String decrypt(String encryptedText) {
